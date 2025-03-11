@@ -5,6 +5,7 @@
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
+import { ref } from "lit/directives/ref.js";
 
 /**
  * `link-preview-card`
@@ -13,7 +14,6 @@ import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
  * @element link-preview-card
  */
 export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
-
   static get tag() {
     return "link-preview-card";
   }
@@ -21,6 +21,11 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.title = "";
+    this.url = "http://hax.psu.edu";
+    this.description = "";  
+    this.data = {};
+    this.image = "";
+    this.loading = false;
     this.t = this.t || {};
     this.t = {
       ...this.t,
@@ -33,13 +38,47 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         "/../",
       locales: ["ar", "es", "hi", "zh"],
     });
+    
   }
+
+
+  updated(changedProperties) { 
+    super.updated(changedProperties);
+    if (changedProperties.has("url")) {
+      this.data = this.getData(this.url);
+    }
+  }
+
+  
+
+  async getData(link) {
+    const url = `https://open-apis.hax.cloud/api/services/website/metadata?q=${link}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    this.title = json.data.title;
+    this.description = json.data.description;
+    this.url = json.data.url;
+    this.image = json.data.image;
+  } catch (error) {
+      console.error(error.message);
+      }
+    }
 
   // Lit reactive properties
   static get properties() {
     return {
       ...super.properties,
       title: { type: String },
+      data: { type: Object },
+      url: { type: String },
+      description: { type: String },
+      image: { type: String },
+      loading: { type: Boolean, reflect: true },
     };
   }
 
@@ -67,8 +106,13 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
 <div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
+  <div>${this.title}</div>
+  <div>${this.url}</div>
+  <div>${this.description}</div> 
+  <div>${this.image}</div>
+
+  
+
 </div>`;
   }
 
@@ -82,3 +126,5 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
 }
 
 globalThis.customElements.define(LinkPreviewCard.tag, LinkPreviewCard);
+
+
