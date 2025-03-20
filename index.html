@@ -9,8 +9,8 @@
 
   <style>
     :root, html, body {
-      margin: 0;
-      padding: 0;
+      margin: var(--ddd-spacing-0);
+      padding: var(--ddd-spacing-0);
     }
     #demo {
       margin: var(--ddd-spacing-2);
@@ -35,9 +35,11 @@
 <body>
   <div id="demo">
     <h1>link-preview-card</h1>
-    <!-- this is going to do whatever the tag's defaults are -->
-    <h2>Default</h2>
-    <link-preview-card id="example" title="Sample"></link-preview-card>
+    <link-preview-card url = "https://www.youtube.com/"></link-preview-card>
+    <link-preview-card url = "https://groupme.com/"></link-preview-card>
+    <link-preview-card url = "https://www.yikyak.com/"></link-preview-card>
+    <link-preview-card url = "https://www.netflix.com/"></link-preview-card>
+
   </div>
   <script type="module" src="./link-preview-card.js"></script>
 </body>
